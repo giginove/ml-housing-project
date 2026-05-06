@@ -55,17 +55,16 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install Dependencies
+      - name: Install Dependencies and Package
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Run Pytest
-        run: pytest -v --cov=src
-
-  #Vérification test
       - name: Check project structure
         run: pytest scripts/check_project_structure.py
+
+      - name: Run Pytest
+        run: pytest -v --cov=src
 
   # 4. Verification de la securite (Bandit)
   security:
