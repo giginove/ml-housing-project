@@ -64,7 +64,7 @@ def health():
     return {
         "status": "ok",
         "model_loaded": "model_latest.joblib",
-        "exists": model_path.exists(),
+        "exists": model_path.exists()
     }
 
 

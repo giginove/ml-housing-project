@@ -63,6 +63,10 @@ jobs:
       - name: Run Pytest
         run: pytest -v --cov=src
 
+  #Vérification test
+      - name: Check project structure
+        run: pytest scripts/check_project_structure.py
+
   # 4. Verification de la securite (Bandit)
   security:
     runs-on: ubuntu-latest
