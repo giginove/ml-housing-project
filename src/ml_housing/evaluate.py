@@ -5,7 +5,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 def evaluate_model(model, X_test, y_test) -> dict:
-    """Évalue le modèle et retourne les métriques principales."""
+    """Evaluate a model and return the main regression metrics."""
     predictions = model.predict(X_test)
 
     mae = mean_absolute_error(y_test, predictions)

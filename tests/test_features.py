@@ -1,21 +1,13 @@
-"""Tests for ml_housing.features."""
-
-import sys
-from pathlib import Path
-
+from ml_housing.config import TARGET_COLUMN
 from ml_housing.data import load_housing_data
 from ml_housing.features import split_features_target, split_train_test
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
 
 
 def test_split_features_target():
     df = load_housing_data()
     X, y = split_features_target(df)
 
-    assert "MedHouseVal" not in X.columns
+    assert TARGET_COLUMN not in X.columns
     assert len(X) == len(y)
 
 

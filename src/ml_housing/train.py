@@ -1,14 +1,30 @@
-"""Model training entry points for the housing ML project."""
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 
-from sklearn.ensemble import RandomForestRegressor
+from ml_housing.config import RANDOM_STATE
 
 
-def train_model(X_train, y_train) -> RandomForestRegressor:
-    """Entraîne un modèle de régression."""
-    model = RandomForestRegressor(
-        n_estimators=100,
-        random_state=42,
-        n_jobs=-1,
-    )
+def train_model(X_train, y_train, model_name="random_forest"):
+    """Train a regression model based on model_name."""
+
+    if model_name == "linear":
+        model = LinearRegression()
+
+    elif model_name == "gbr":
+        model = GradientBoostingRegressor(random_state=RANDOM_STATE)
+
+    elif model_name == "random_forest":
+        model = RandomForestRegressor(
+            n_estimators=100,
+            random_state=RANDOM_STATE,
+            n_jobs=-1,
+        )
+
+    else:
+        valid_models = "linear, gbr, random_forest"
+        raise ValueError(
+            f"Unknown model_name '{model_name}'. Choose one of: {valid_models}."
+        )
+
     model.fit(X_train, y_train)
     return model

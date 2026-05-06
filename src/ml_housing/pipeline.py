@@ -1,30 +1,33 @@
-"""End-to-end pipeline orchestration for the housing ML project."""
-
 import json
 from pathlib import Path
 
 import joblib
 
-from ml_housing.data import load_housing_data
+from ml_housing.config import MODEL_FILENAME
+from ml_housing.data import load_housing_data, validate_target_column
 from ml_housing.evaluate import evaluate_model
 from ml_housing.features import split_features_target, split_train_test
 from ml_housing.train import train_model
 
 
-def run_pipeline(artifacts_dir: str = "artifacts") -> dict:
-    """Exécute le pipeline ML complet en local."""
+def run_pipeline(artifacts_dir="artifacts", model_name="random_forest") -> dict:
+    """Run the full training pipeline and persist the model artifacts."""
     artifacts_path = Path(artifacts_dir)
     artifacts_path.mkdir(parents=True, exist_ok=True)
 
     df = load_housing_data()
+    if not validate_target_column(df):
+        raise ValueError("Housing dataset must contain a non-empty target column.")
+
     X, y = split_features_target(df)
     X_train, X_test, y_train, y_test = split_train_test(X, y)
 
-    model = train_model(X_train, y_train)
+    model = train_model(X_train, y_train, model_name=model_name)
     metrics = evaluate_model(model, X_test, y_test)
 
-    joblib.dump(model, artifacts_path / "model.joblib")
-    with open(artifacts_path / "metrics.json", "w", encoding="utf-8") as file:
-        json.dump(metrics, file, indent=2)
+    # Keep the trained estimator and metrics together for reproducible runs.
+    joblib.dump(model, artifacts_path / MODEL_FILENAME)
+    with open(artifacts_path / "metrics.json", "w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=2)
 
     return metrics

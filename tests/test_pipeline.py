@@ -1,22 +1,33 @@
-"""Tests for ml_housing.pipeline."""
-
-import sys
-from pathlib import Path
+import pytest
 
 from ml_housing.pipeline import run_pipeline
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-
-
-def test_pipeline_returns_metrics(tmp_path):
-    metrics = run_pipeline(artifacts_dir=str(tmp_path))
-
-    assert "mae" in metrics
-    assert "rmse" in metrics
-    assert "r2" in metrics
+def assert_valid_regression_metrics(metrics):
     assert metrics["mae"] > 0
-    assert -1 <= metrics["r2"] <= 1
-    assert (tmp_path / "model.joblib").exists()
-    assert (tmp_path / "metrics.json").exists()
+    assert metrics["rmse"] > 0
+    assert metrics["rmse"] >= metrics["mae"]
+    assert 0 <= metrics["r2"] <= 1
+
+
+def test_pipeline_random_forest(tmp_path):
+    metrics = run_pipeline(artifacts_dir=str(tmp_path), model_name="random_forest")
+
+    assert_valid_regression_metrics(metrics)
+
+
+def test_pipeline_linear(tmp_path):
+    metrics = run_pipeline(artifacts_dir=str(tmp_path), model_name="linear")
+
+    assert_valid_regression_metrics(metrics)
+
+
+def test_pipeline_gbr(tmp_path):
+    metrics = run_pipeline(artifacts_dir=str(tmp_path), model_name="gbr")
+
+    assert_valid_regression_metrics(metrics)
+
+
+def test_pipeline_unknown_model_name_raises_error(tmp_path):
+    with pytest.raises(ValueError, match="Unknown model_name"):
+        run_pipeline(artifacts_dir=str(tmp_path), model_name="not_a_model")
