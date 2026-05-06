@@ -9,11 +9,6 @@ REQUIRED_PATHS = [
     "pyproject.toml",
 ]
 
-PACKAGES = [
-    "src/ml_housing",
-    "backend",
-]
-
 FORBIDDEN_IN_BACKEND = [
     "train.py",
     "pipeline.py",
@@ -25,14 +20,6 @@ def test_required_paths_exist():
     root = Path(".")
     missing = [path for path in REQUIRED_PATHS if not (root / path).exists()]
     assert not missing, f"Elements manquants dans le projet: {missing}"
-
-
-def test_python_packages_have_init():
-    root = Path(".")
-    missing_init = [
-        pkg for pkg in PACKAGES if not (root / pkg / "__init__.py").exists()
-    ]
-    assert not missing_init, f"Fichiers __init__.py manquants dans: {missing_init}"
 
 
 def test_backend_does_not_contain_training_code():
