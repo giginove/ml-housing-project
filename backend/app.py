@@ -59,7 +59,13 @@ model = get_latest_model()
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    project_root = Path(__file__).resolve().parent.parent
+    model_path = project_root / "artifacts" / "models" / "model_latest.joblib"
+    return {
+        "status": "ok",
+        "model_loaded": "model_latest.joblib",
+        "exists": model_path.exists(),
+    }
 
 
 @app.post("/predict")
