@@ -1,7 +1,7 @@
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 
-from ml_housing.config import RANDOM_STATE
+from ml_housing.config import RANDOM_FOREST_N_JOBS, RANDOM_STATE
 
 
 def train_model(X_train, y_train, model_name="random_forest"):
@@ -17,7 +17,7 @@ def train_model(X_train, y_train, model_name="random_forest"):
         model = RandomForestRegressor(
             n_estimators=100,
             random_state=RANDOM_STATE,
-            n_jobs=-1,
+            n_jobs=RANDOM_FOREST_N_JOBS,
         )
 
     else:

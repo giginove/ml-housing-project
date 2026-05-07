@@ -54,16 +54,27 @@ def get_latest_model():
     raise FileNotFoundError(f"No model found in {models_path}")
 
 
+def set_single_thread_prediction(model):
+    """Avoid joblib permission issues during local and CI predictions."""
+    if hasattr(model, "set_params"):
+        params = model.get_params()
+        n_jobs_params = {name: 1 for name in params if name.endswith("n_jobs")}
+        if n_jobs_params:
+            model.set_params(**n_jobs_params)
+    return model
+
+
 # -------------------------
 # LAZY LOADING DU MODELE
 # -------------------------
 _model = None
 
+
 def get_model():
     global _model
     if _model is None:
         try:
-            _model = get_latest_model()
+            _model = set_single_thread_prediction(get_latest_model())
         except FileNotFoundError:
             # MODE CI : modèle factice
             _model = LinearRegression()
