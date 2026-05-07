@@ -4,7 +4,7 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
-from sklearn.linear_model import LinearRegression  # fallback
+from sklearn.dummy import DummyRegressor
 
 app = FastAPI()
 
@@ -64,6 +64,14 @@ def set_single_thread_prediction(model):
     return model
 
 
+def get_fallback_model():
+    """Return a fitted fallback model for CI runs without local artifacts."""
+    fallback_model = DummyRegressor(strategy="constant", constant=0.0)
+    fallback_X = pd.DataFrame([[0.0] * len(FEATURE_COLUMNS)], columns=FEATURE_COLUMNS)
+    fallback_y = [0.0]
+    return fallback_model.fit(fallback_X, fallback_y)
+
+
 # -------------------------
 # LAZY LOADING DU MODELE
 # -------------------------
@@ -77,7 +85,7 @@ def get_model():
             _model = set_single_thread_prediction(get_latest_model())
         except FileNotFoundError:
             # MODE CI : modèle factice
-            _model = LinearRegression()
+            _model = get_fallback_model()
     return _model
 
 
