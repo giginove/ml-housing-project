@@ -3,17 +3,26 @@
 venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
-# Données et modèles locaux
+# Donnees, modeles et artefacts locaux
 data/
 models/
 *.pkl
 *.joblib
+artifacts/*.joblib
+artifacts/**/*.joblib
+artifacts/*.pkl
+artifacts/**/*.pkl
 
 # Secrets
 .env
+*.env
 *.key
 
-# Système / IDE
+# Systeme / IDE
 .vscode/
 .DS_Store
+Thumbs.db
